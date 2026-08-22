@@ -15,6 +15,14 @@
 # temperature (thermal_zone + hwmon, covering both ACPI-reported and
 # chip-specific sensors -- SteamOS mini PCs are typically AMD APUs, which
 # report via hwmon/k10temp).
+#
+# The filesystem collector excludes SteamOS's known persistent-storage
+# bind-mount targets -- /nix, /opt, /root, /srv, and everything under
+# /var/{cache/pacman,lib/docker,lib/flatpak,lib/steamos-log-submitter,
+# lib/systemd/coredump,log,tmp} all bind-mount onto the same /home-backed
+# partition, so without this they'd report as a dozen "different"
+# filesystems all showing the exact same numbers. Only /, /home, and /var
+# are genuinely distinct partitions on this hardware.
 set -euo pipefail
 
 VERSION="${VERSION:-1.12.1}"
@@ -77,6 +85,7 @@ ExecStart=%h/.local/bin/node_exporter \\
   --web.listen-address=:9100 \\
   --collector.disable-defaults \\
   --collector.filesystem \\
+  --collector.filesystem.mount-points-exclude='^/(nix|opt|root|srv|esp|efi|var/cache/pacman|var/lib/docker|var/lib/flatpak|var/lib/steamos-log-submitter|var/lib/systemd/coredump|var/log|var/tmp)(\$|/)' \\
   --collector.diskstats \\
   --collector.meminfo \\
   --collector.cpu \\
