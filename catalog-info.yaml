@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: steamos-provision
+  annotations:
+    github.com/project-slug: mattjmorrison-homelab/steamos-provision
+spec:
+  type: library
+  owner: mattjmorrison-homelab
+  lifecycle: experimental
+  system: provisioning
